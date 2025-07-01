@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google"
 import "./globals.scss"
+import { Toaster } from "sonner";
 
 
 export const metadata: Metadata = {
@@ -17,6 +18,16 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body>
         {/* <h1>header</h1> */}
+        <Toaster 
+          position="bottom-right"
+          toastOptions={{
+            style:{
+              backgroundColor: "#f1f1f1",
+              color: "#131313",
+              borderColor: "rgba(255,255,255,0.5)"
+            }
+          }}
+        />
         {children}
       </body>
     </html>

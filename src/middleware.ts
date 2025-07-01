@@ -12,7 +12,7 @@ export async function middleware(req: NextRequest){
     const token = await getCookieServer()
    
     if(pathname.startsWith("/dashboard")){
-        console.log(pathname, token)
+      
         if(!token){
             return NextResponse.redirect(new URL("/", req.url))
         }

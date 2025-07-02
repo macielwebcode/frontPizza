@@ -1,7 +1,23 @@
+"use client"
+
 import styles from './styles.module.scss'
 import { RefreshCw } from 'lucide-react'
+import { OrderProps } from '@/lib/order.type'
+import ModalOrder from '../modal'
+import { use } from 'react'
+import { OrderContext } from '@/providers/order'
 
-export default function Orders(){
+interface Props{
+    orders: OrderProps[]
+}
+
+export default function Orders({ orders }: Props){
+    const { isOpen, onRequestOpen } = use(OrderContext)
+
+    async function handleDetails(order_id: string){
+       await onRequestOpen(order_id)
+    }
+
     return(
         <>
             <main className={styles.container}>
@@ -13,12 +29,17 @@ export default function Orders(){
                 </section>
 
                 <section className={styles.listOrders}>
-                    <button className={styles.orderItem}>
-                        <div className={styles.tag}></div>
-                        <span>Mesa 01</span>
-                    </button>
+                    {orders.map(item => (
+                        <button key={item.id} className={styles.orderItem} onClick={ () => handleDetails(item.id)}>
+                            <div className={styles.tag}></div>
+                            <span>Mesa {item.table}</span>
+                        </button>
+                    ))}
+                    
                 </section>
             </main>
+            { isOpen && <ModalOrder /> }
+            
         </>
     )
 }

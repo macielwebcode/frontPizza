@@ -3,10 +3,12 @@
 import { createContext, ReactNode, useState } from "react"
 import { api } from "@/services/api";
 import { getCookieClient } from "@/lib/cookieClient";
+import { toast } from "sonner";
 
-interface OrdemItemProps{
+export interface OrdemItemProps{
     id: string;
     amount: number;
+    created_at: string;
     order_id: string;
     product_id: string;
     product:{
@@ -34,6 +36,7 @@ type OrderContextData = {
     onRequestOpen: (order_id: string) => Promise<void>;
     onRequestClose: () => void;
     order: OrdemItemProps[];
+    finishOrder: (order_id: string) => Promise<void>;
 }
 
 type  OrderProviderProps = {
@@ -70,6 +73,28 @@ export function OrderProvider({ children }: OrderProviderProps){
         setOpen(false)
     }
 
+    async function finishOrder(order_id: string){
+        const token = getCookieClient()
+
+        const data = {
+            ordr_id: order_id
+        }
+        try {
+            await api.put("/order/end", data, {
+                headers:{
+                    Authorization: `Bearer ${token}`
+                }
+            })
+        } catch (error) {
+            
+            console.log(error)
+            toast.error("Pedido com falha!!")
+            return
+        }
+
+        toast.success("Pedido concluído com sucesso")
+    }
+
 
     return(
         <OrderContext.Provider 
@@ -77,7 +102,8 @@ export function OrderProvider({ children }: OrderProviderProps){
                 isOpen,
                 onRequestOpen,
                 onRequestClose,
-                order
+                order,
+                finishOrder
             }}
         >
             {children}
